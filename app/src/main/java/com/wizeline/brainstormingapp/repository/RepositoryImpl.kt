@@ -19,10 +19,10 @@ class RepositoryImpl(private val app: App) : Repository {
         FirebaseApp.initializeApp(app)
     }
 
-    override fun createRoom(email: String, token: String, name: String): Single<Room> {
+    override fun createRoom(email: String, name: String): Single<Room> {
         return Single.fromPublisher {
-            val room = Room(token, email, name)
-            roomsTable.child(roomsTable.push().key).setValue(room)
+            val room = Room(roomsTable.push().key, email, name)
+            roomsTable.child(room.id).setValue(mapOf("email" to email, "name" to name))
             it.onNext(room)
             it.onComplete()
         }
