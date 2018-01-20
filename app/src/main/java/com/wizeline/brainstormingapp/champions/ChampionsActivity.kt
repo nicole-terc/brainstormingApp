@@ -11,7 +11,7 @@ class ChampionsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_champions)
         title = "Champions"
 
-        var fragment = ChampionsActivityFragment.getInstance(intent.getStringExtra("roomId"))
+        var fragment = ChampionsActivityFragment.getInstance(intent.getStringExtra("roomid"))
         supportFragmentManager.beginTransaction().add(R.id.champions_container, fragment).commit()
     }
 
