@@ -1,26 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <FrameLayout
+        android:id="@+id/champions_container"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="8dp"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:title="@string/title_champions"/>
+        android:layout_height="match_parent"/>
 
-    <fragment
-        android:id="@+id/fragment"
-        android:name="com.wizeline.brainstormingapp.champions.ChampionsActivityFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        tools:layout="@layout/fragment_champions"/>
-
-</merge>
+</FrameLayout>

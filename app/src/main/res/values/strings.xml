@@ -6,4 +6,5 @@
     <string name="votes_down">%d Down votes</string>
     <string name="waiting_all">Waiting for others to join</string>
     <string name="waiting_host">Click on the start button to begin the brainstorming session</string>
+    <string name="waiting_for_others">Sit tight!\n\nWaiting for others to finish :)</string>
 </resources>

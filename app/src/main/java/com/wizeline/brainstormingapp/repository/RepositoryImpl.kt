@@ -136,7 +136,6 @@ class RepositoryImpl(private val app: App) : Repository {
                         }
                     }
                     it.onNext(messages)
-                    it.onComplete()
                 }
             })
         }
@@ -247,7 +246,7 @@ class RepositoryImpl(private val app: App) : Repository {
         val emailList = ArrayList<String>()
         return getMessages(roomId)
                 .map({ messages ->
-                    messages.forEach() {
+                    messages.forEach {
                         if (!emailList.contains(it.email)) {
                             emailList.add(it.email)
                         }
@@ -257,8 +256,8 @@ class RepositoryImpl(private val app: App) : Repository {
                 .toObservable()
                 .flatMap({ _ -> getVotes(roomId) })
                 .map({ vote ->
-                    if (emailList.contains(vote.email));
-                    run { emailList.remove(vote.email) }
+                    if (emailList.contains(vote.email))
+                        run { emailList.remove(vote.email) }
                     emailList.isEmpty()
                 })
     }
