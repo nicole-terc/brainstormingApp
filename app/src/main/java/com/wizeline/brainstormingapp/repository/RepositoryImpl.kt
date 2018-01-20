@@ -126,8 +126,51 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
-    override fun getTopMessages(roomId: String): Single<List<Message>> {
-        return app.repository.getTopMessages(roomId)
+    override fun getTopMessages(roomId: String): Single<List<Pair<Message, Int>>> {
+        return Single.fromPublisher { publisher ->
+            messagesTable.orderByChild("id_room").equalTo(roomId).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    publisher.onError(error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val messages = arrayListOf<Message>()
+                    snapshot.children.filterNotNull().forEach {
+                        val key = it.key
+                        val email = it.child("email")?.value as String?
+                        val text = it.child("text")?.value as String?
+                        if (key != null && email != null && text != null) {
+                            messages.add(Message(key, roomId, email, text))
+                        }
+                    }
+                    val messagesMap = hashMapOf<Message, Int>()
+                    messages.forEach { message ->
+                        votesTable.orderByChild("id_message").equalTo(message.id).addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onCancelled(error: DatabaseError) {
+                                publisher.onError(error.toException())
+                            }
+
+                            override fun onDataChange(voteSnapshot: DataSnapshot) {
+                                var votes = 0
+                                voteSnapshot.children.filterNotNull().forEach {
+                                    val vote = it.child("vote")?.value as Long?
+                                    if (vote != null) {
+                                        votes += vote.toInt()
+                                    }
+                                }
+                                messagesMap[message] = votes
+                                if (messagesMap.keys.size == messages.size) {
+                                    publisher.onNext(messagesMap.toList()
+                                            .sortedByDescending { (_, value) -> value }
+                                            .take(5))
+                                    publisher.onComplete()
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+        }
     }
 
     override fun vote(votes: List<UserVote>): Single<List<Vote>> {

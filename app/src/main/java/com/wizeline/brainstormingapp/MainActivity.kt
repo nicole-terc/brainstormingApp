@@ -16,14 +16,25 @@ class MainActivity : AppCompatActivity() {
         val repository = RepositoryImpl(applicationContext as App)
         text.setOnClickListener {
             Log.d("Wizeline", "clicked")
-//            repository.createRoom("A name")
-//            repository.getRoom("-L3Gvjp-JBCpmCZUKqs5")
-//            repository.getRooms()
-//            repository.createMessage("-L3Gvjp-JBCpmCZUKqs5", listOf("Hello", "World"))
-//            repository.getOtherMessages("-L3Gvjp-JBCpmCZUKqs5")
-            repository.vote(listOf(UserVote("-L3HNPz71CnXX8hwDCSX", if (Math.random() > 0.5) 1 else -1), UserVote("-L3HNPz71CnXX8hwDCSX", if (Math.random() > 0.5) 1 else -1)))
+            var roomId = ""
+            repository.createRoom("A name")
+                    .toObservable()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
+                    .doOnNext { Log.d("Wizeline", "createRoom $it") }
+                    .flatMap {
+                        roomId = it.id
+                        repository.getRoom(roomId).toObservable()
+                    }
+                    .flatMap { repository.createMessage(it.id, listOf("Hello", "World")).toObservable() }
+                    .doOnNext { Log.d("Wizeline", "createMessage $it") }
+                    .flatMap { repository.getOtherMessages(it[0].idRoom).toObservable() }
+                    .doOnNext { Log.d("Wizeline", "getOtherMessages $it") }
+                    .flatMap { repository.vote(listOf(UserVote(it[0].id, if (Math.random() > 0.5) 1 else -1))).toObservable() }
+                    .doOnNext { Log.d("Wizeline", "vote $it") }
+                    .flatMap { repository.getTopMessages(roomId).toObservable() }
+                    .doOnNext { Log.d("Wizeline", "getTopMessages $it") }
+                    .flatMap { repository.getRooms() }
                     .subscribe({
                         Log.d("Wizeline", "Success %s".format(it))
                     }, {

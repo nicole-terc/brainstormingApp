@@ -35,8 +35,8 @@ class App : Application() {
                 )
             }
 
-            override fun getTopMessages(roomId: String): Single<List<Message>> {
-                return Single.just(listOf(Message("mockId", "mockRoomId", "aRemote@email.com", "Mock text")))
+            override fun getTopMessages(roomId: String): Single<List<Pair<Message, Int>>> {
+                return Single.just(listOf(Message("mockId", "mockRoomId", "aRemote@email.com", "Mock text") to 10))
             }
 
             override fun vote(votes: List<UserVote>): Single<List<Vote>> {
