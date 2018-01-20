@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
 
         val repository = RepositoryImpl(applicationContext as App)
         text.setOnClickListener {
-            Log.d("Wizeline", "clicked".format())
+            Log.d("Wizeline", "clicked")
 //            repository.createRoom("A name")
 //            repository.getRoom("-L3Gvjp-JBCpmCZUKqs5")
 //            repository.getRooms()

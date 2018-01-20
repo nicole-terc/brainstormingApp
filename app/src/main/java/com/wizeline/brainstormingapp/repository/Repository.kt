@@ -20,6 +20,6 @@ interface Repository {
 
     fun getTopMessages(): Single<List<Message>>
 
-    fun vote(message: Message, vote: Long): Single<Vote>
+    fun vote(messageId: String, vote: Long): Single<Vote>
 
 }

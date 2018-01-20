@@ -132,8 +132,8 @@ class RepositoryImpl(private val app: App) : Repository {
         return app.repository.getTopMessages()
     }
 
-    override fun vote(message: Message, vote: Long): Single<Vote> {
-        return app.repository.vote(message, vote)
+    override fun vote(messageId: String, vote: Long): Single<Vote> {
+        return app.repository.vote(messageId, vote)
     }
 
 }
