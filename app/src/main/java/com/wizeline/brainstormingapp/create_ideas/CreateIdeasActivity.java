@@ -50,7 +50,7 @@ public class CreateIdeasActivity extends AppCompatActivity implements CreateIdea
         repository = ((App) getApplicationContext()).getRepository();
         String roomJson = getIntent().getExtras().getString("room");
         this.room = ParserUtil.Companion.jsonToRoom(roomJson);
-        finalTime = room.getStartTime() + 420000L;
+        finalTime = room.getStartTime() + 15000L;
         mSwipeView = findViewById(R.id.swipeView);
         messages = new ArrayList<>();
         toolbar = getSupportActionBar();

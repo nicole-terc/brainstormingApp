@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipeDirectionalView;
@@ -33,6 +35,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
     //    private boolean isToUndo = false;
     private Point cardViewHolderSize;
     private List<UserVote> userVotes;
+    private RelativeLayout loading;
 
     public static Intent getIntent(Context context, String roomId) {
         Intent i = new Intent(context, VoteActivity.class);
@@ -47,7 +50,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
         userVotes = new ArrayList<>();
         mSwipeView = findViewById(R.id.swipeView);
         mContext = getApplicationContext();
-
+        //loading = findViewById(R.id.loading);
         int bottomMargin = Utils.dpToPx(160);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
         mSwipeView.getBuilder()
@@ -70,20 +73,27 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
 
         cardViewHolderSize = new Point(windowSize.x, windowSize.y - bottomMargin);
 
-        ((App) mContext).getRepository().getOtherMessages(getIntent().getStringExtra(ROOM_ID))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Message>>() {
-                    @Override
-                    public void accept(List<Message> messages) throws Exception {
-                        addMessagesToView(messages, cardViewHolderSize);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        throwable.printStackTrace();
-                    }
-                });
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((App) mContext).getRepository().getOtherMessages(getIntent().getStringExtra(ROOM_ID))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<List<Message>>() {
+                            @Override
+                            public void accept(List<Message> messages) throws Exception {
+                                addMessagesToView(messages, cardViewHolderSize);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                throwable.printStackTrace();
+                            }
+                        });
+
+            }
+        }, 3000);
 
 
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
@@ -135,10 +145,15 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
         });
     }
 
-    private void addMessagesToView(List<Message> messages, Point cardViewHolderSize) {
+    public void addMessagesToView(List<Message> messages, Point cardViewHolderSize) {
         for (Message message : messages) {
             mSwipeView.addView(new VoteHolder(message, cardViewHolderSize, this));
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
     }
 
     @Override

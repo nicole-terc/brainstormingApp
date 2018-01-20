@@ -5,6 +5,7 @@
     android:background="@color/grey"
     android:orientation="vertical">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
@@ -38,4 +39,6 @@
         android:id="@+id/swipeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+
 </FrameLayout>
