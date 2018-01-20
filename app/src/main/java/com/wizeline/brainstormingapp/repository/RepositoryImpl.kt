@@ -1,58 +1,21 @@
 package com.wizeline.brainstormingapp.repository
 
 import com.google.firebase.FirebaseApp
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.wizeline.brainstormingapp.App
 import com.wizeline.brainstormingapp.Message
 import com.wizeline.brainstormingapp.Room
 import com.wizeline.brainstormingapp.Vote
 import com.wizeline.brainstormingapp.ext.getUserEmail
+import io.reactivex.Observable
 import io.reactivex.Single
 
 class RepositoryImpl(private val app: App) : Repository {
 
     private val roomsTable by lazy { FirebaseDatabase.getInstance().getReference("rooms") }
-    private val rooms = hashMapOf<String, Room>()
-
-    private val roomChildListener: ChildEventListener
 
     init {
         FirebaseApp.initializeApp(app)
-
-        roomChildListener = roomsTable.orderByKey().addChildEventListener(object : ChildEventListener {
-            override fun onCancelled(error: DatabaseError) {
-                error.toException().printStackTrace()
-            }
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                cacheData(snapshot)
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                cacheData(snapshot)
-            }
-
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                cacheData(snapshot)
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                rooms.remove(snapshot.key)
-            }
-
-            fun cacheData(snapshot: DataSnapshot) {
-                val key = snapshot.key
-                val email = snapshot.child("email")?.value as String?
-                val name = snapshot.child("name")?.value as String?
-                val timestamp = snapshot.child("timestamp")?.value as Long?
-                if (key != null && email != null && name != null && timestamp != null) {
-                    rooms[key] = Room(key, email, name, timestamp)
-                }
-            }
-        })
     }
 
     override fun createRoom(name: String): Single<Room> {
@@ -68,11 +31,60 @@ class RepositoryImpl(private val app: App) : Repository {
     }
 
     override fun getRoom(roomId: String): Single<Room> {
-        return app.repository.getRoom(roomId)
+        return Single.fromPublisher {
+            roomsTable.child(roomId).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    it.onError(error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val key = snapshot.key
+                    val email = snapshot.child("email")?.value as String?
+                    val name = snapshot.child("name")?.value as String?
+                    val timestamp = snapshot.child("timestamp")?.value as Long?
+                    if (key != null && email != null && name != null && timestamp != null) {
+                        it.onNext(Room(key, email, name, timestamp))
+                        it.onComplete()
+                    } else {
+                        it.onError(NoSuchElementException("Room with id $roomId not found!"))
+                    }
+                }
+            })
+        }
     }
 
-    override fun getRooms(): Single<List<Room>> {
-        return Single.just(rooms.values.toList())
+    override fun getRooms(): Observable<Room> {
+        return Observable.fromPublisher {
+            roomsTable.orderByKey().addChildEventListener(object : ChildEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    error.toException().printStackTrace()
+                }
+
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                    cacheData(snapshot)
+                }
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                    cacheData(snapshot)
+                }
+
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    cacheData(snapshot)
+                }
+
+                override fun onChildRemoved(snapshot: DataSnapshot) {}
+
+                fun cacheData(snapshot: DataSnapshot) {
+                    val key = snapshot.key
+                    val email = snapshot.child("email")?.value as String?
+                    val name = snapshot.child("name")?.value as String?
+                    val timestamp = snapshot.child("timestamp")?.value as Long?
+                    if (key != null && email != null && name != null && timestamp != null) {
+                        it.onNext(Room(key, email, name, timestamp))
+                    }
+                }
+            })
+        }
     }
 
     override fun joinRoom(room: Room): Single<Boolean> {
