@@ -17,13 +17,17 @@ class MainActivity : AppCompatActivity() {
         val repository = RepositoryImpl(applicationContext as App)
         text.setOnClickListener {
             Log.d("Wizeline", "clicked".format())
-            repository.createMessage("-L3Gvjp-JBCpmCZUKqs5", listOf("Hello World", "Ola Mundo"))
+//            repository.createRoom("A name")
+//            repository.getRoom("-L3Gvjp-JBCpmCZUKqs5")
+//            repository.getRooms()
+//            repository.createMessage("-L3Gvjp-JBCpmCZUKqs5", listOf("hello", "world"))
+            repository.getOtherMessages("-L3Gvjp-JBCpmCZUKqs5")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        Log.d("Wizeline", "Success %s".format(it))
+                        Log.d("Wizeline", "Success $it")
                     }, {
-                        Log.d("Wizeline", "Error %s".format(it))
+                        Log.d("Wizeline", "Error $it")
                     })
         }
     }
