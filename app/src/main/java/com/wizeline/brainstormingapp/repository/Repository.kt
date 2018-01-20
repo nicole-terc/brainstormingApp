@@ -6,7 +6,7 @@ import io.reactivex.Single
 
 interface Repository {
 
-    fun createRoom(email: String, token: String): Single<Room>
+    fun createRoom(email: String, token: String, name: String): Single<Room>
 
     fun getRooms(): Single<List<Room>>
 
