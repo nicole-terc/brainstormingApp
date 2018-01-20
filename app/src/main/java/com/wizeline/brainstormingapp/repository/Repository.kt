@@ -16,8 +16,6 @@ interface Repository {
 
     fun createMessage(roomId: String, texts: List<String>): Single<List<Message>>
 
-    fun getMessages(): Single<List<Message>>
-
     fun getOtherMessages(): Single<List<Message>>
 
     fun getTopMessages(): Single<List<Message>>

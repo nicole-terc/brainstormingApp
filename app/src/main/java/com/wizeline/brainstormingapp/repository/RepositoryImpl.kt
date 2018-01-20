@@ -103,10 +103,6 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
-    override fun getMessages(): Single<List<Message>> {
-        return app.repository.getMessages()
-    }
-
     override fun getOtherMessages(): Single<List<Message>> {
         return app.repository.getOtherMessages()
     }
