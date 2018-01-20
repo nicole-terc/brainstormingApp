@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         val repository = RepositoryImpl(applicationContext as App)
         text.setOnClickListener {
             Log.d("Wizeline", "clicked".format())
-            repository.createRoom("ademar.oliveira@wizeline.com", "aToken${Math.random()}", "A name")
+            repository.getRooms()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
