@@ -1,6 +1,7 @@
 package com.wizeline.brainstormingapp.VoteTinder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,9 @@ import com.wizeline.brainstormingapp.App;
 import com.wizeline.brainstormingapp.Message;
 import com.wizeline.brainstormingapp.R;
 import com.wizeline.brainstormingapp.UserVote;
+import com.wizeline.brainstormingapp.Vote;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -22,18 +25,25 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class VoteActivity extends AppCompatActivity implements VoteHolder.Callback {
-
+    private final static String ROOM_ID = "roomid";
     private SwipeDirectionalView mSwipeView;
     private Context mContext;
     private int mAnimationDuration = 300;
-    private boolean isToUndo = false;
+    //    private boolean isToUndo = false;
     private Point cardViewHolderSize;
+    private List<UserVote> userVotes;
+
+    public static Intent getIntent(Context context, String roomId) {
+        Intent i = new Intent(context, VoteActivity.class);
+        i.putExtra(ROOM_ID, roomId);
+        return i;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vote);
-
+        userVotes = new ArrayList<>();
         mSwipeView = findViewById(R.id.swipeView);
         mContext = getApplicationContext();
 
@@ -59,7 +69,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
 
         cardViewHolderSize = new Point(windowSize.x, windowSize.y - bottomMargin);
 
-        ((App) mContext).getRepository().getMessages()
+        ((App) mContext).getRepository().getOtherMessages(getIntent().getStringExtra(ROOM_ID))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Message>>() {
@@ -89,19 +99,36 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
             }
         });
 
-        findViewById(R.id.undoBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSwipeView.undoLastSwipe();
-            }
-        });
+//        findViewById(R.id.undoBtn).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mSwipeView.undoLastSwipe();
+//            }
+//        });
 
         mSwipeView.addItemRemoveListener(new ItemRemovedListener() {
             @Override
             public void onItemRemoved(int count) {
-                if (isToUndo) {
-                    isToUndo = false;
-                    mSwipeView.undoLastSwipe();
+//                if (isToUndo) {
+//                    isToUndo = false;
+//                    mSwipeView.undoLastSwipe();
+//                }
+                if (count == 0) {
+                    ((App) mContext).getRepository().vote(userVotes)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Consumer<List<Vote>>() {
+                                @Override
+                                public void accept(List<Vote> votes) throws Exception {
+                                    // TODO: 1/20/18 aqui va nicolinha
+                                }
+                            }, new Consumer<Throwable>() {
+                                @Override
+                                public void accept(Throwable throwable) throws Exception {
+                                    throwable.printStackTrace();
+                                }
+                            });
+
                 }
             }
         });
@@ -115,8 +142,6 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
 
     @Override
     public void onVote(UserVote vote) {
-
+        userVotes.add(vote);
     }
-
-
 }

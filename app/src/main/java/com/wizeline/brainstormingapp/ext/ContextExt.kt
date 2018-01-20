@@ -3,5 +3,5 @@ package com.wizeline.brainstormingapp.ext
 import android.content.Context
 
 fun Context.getUserEmail(): String {
-    return "anEmail@wizeline.com"
+    return "anotherEmail+${Math.random()}@wizeline.com"
 }

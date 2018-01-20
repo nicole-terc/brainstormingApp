@@ -16,21 +16,22 @@
             android:id="@+id/rejectBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/ic_check_circle" />
+            android:background="@drawable/ic_cancel" />
 
         <ImageButton
             android:id="@+id/acceptBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="30dp"
-            android:background="@drawable/ic_cancel" />
+            android:background="@drawable/ic_check_circle" />
 
         <ImageButton
             android:id="@+id/undoBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="30dp"
-            android:background="@drawable/ic_restore" />
+            android:background="@drawable/ic_restore"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <com.mindorks.placeholderview.SwipeDirectionalView
