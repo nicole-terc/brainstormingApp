@@ -60,7 +60,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
 
         cardViewHolderSize = new Point(windowSize.x, windowSize.y - bottomMargin);
 
-        ((App) mContext).getRepository().getOtherMessages()
+        ((App) mContext).getRepository().getOtherMessages("")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Message>>() {
