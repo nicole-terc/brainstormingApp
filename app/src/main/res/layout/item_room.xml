@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:padding="8dp"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/room_name"
+        android:layout_width="0dp"
+        android:layout_height="34dp"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Super room yai :D"/>
+
+    <TextView
+        android:id="@+id/room_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/room_name"
+        app:layout_constraintStart_toStartOf="@+id/room_name"
+        app:layout_constraintTop_toBottomOf="@+id/room_name"
+        tools:text="12-10-2018 2:00pm"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/room_date"/>
+</android.support.constraint.ConstraintLayout>

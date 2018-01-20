@@ -20,7 +20,7 @@ class RepositoryImpl(private val app: App) : Repository {
 
     override fun createRoom(name: String): Single<Room> {
         return Single.fromPublisher {
-            val room = Room(roomsTable.push().key, app.getUserEmail(), "A name", System.currentTimeMillis())
+            val room = Room(roomsTable.push().key, app.getUserEmail(), name, System.currentTimeMillis())
             roomsTable.child(room.id).setValue(mapOf(
                     "email" to room.hostEmail,
                     "name" to room.name,

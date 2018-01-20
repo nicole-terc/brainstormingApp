@@ -11,7 +11,7 @@ class App : Application() {
     val repository: Repository by lazy {
         object : Repository {
             override fun createRoom(name: String): Single<Room> {
-                return Single.just(Room("mockId", getUserEmail(), "Mock Name", System.currentTimeMillis()))
+                return Single.just(Room("mockId", getUserEmail(), name, System.currentTimeMillis()))
             }
 
             override fun getRoom(roomId: String): Single<Room> {
