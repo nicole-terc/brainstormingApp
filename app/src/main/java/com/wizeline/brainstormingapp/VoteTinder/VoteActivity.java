@@ -59,7 +59,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
 
         cardViewHolderSize = new Point(windowSize.x, windowSize.y - bottomMargin);
 
-        ((App) mContext).getRepository().getMessages()
+        ((App) mContext).getRepository().getOtherMessages("TODO") // TODO get room id
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Message>>() {

@@ -26,7 +26,7 @@ class App : Application() {
                 return Single.just(listOf(Message("mockId", "mockRoomId", getUserEmail(), "Mock text")))
             }
 
-            override fun getOtherMessages(): Single<List<Message>> {
+            override fun getOtherMessages(roomId: String): Single<List<Message>> {
                 return Single.just(listOf(
                         Message("mockId0", "mockRoomId", "moc@email.com", "Mock text0000"),
                         Message("mockId1", "mockRoomId", "moc@email.com", "Mock text11111"),
