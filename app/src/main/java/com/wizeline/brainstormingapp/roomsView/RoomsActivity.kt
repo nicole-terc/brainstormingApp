@@ -1,6 +1,10 @@
 package com.wizeline.brainstormingapp.roomsView
 
+import android.Manifest.permission.GET_ACCOUNTS
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
@@ -8,10 +12,10 @@ import com.google.android.gms.nearby.messages.Message
 import com.google.android.gms.nearby.messages.MessageListener
 import com.wizeline.brainstormingapp.App
 import com.wizeline.brainstormingapp.R
-import com.wizeline.brainstormingapp.repository.Room
 import com.wizeline.brainstormingapp.nerby.NearbyService
 import com.wizeline.brainstormingapp.repository.Repository
 import com.wizeline.brainstormingapp.repository.RepositoryImpl
+import com.wizeline.brainstormingapp.repository.Room
 import com.wizeline.brainstormingapp.util.ParserUtil
 import com.wizeline.brainstormingapp.util.ParserUtil.Companion.roomToJson
 import com.wizeline.brainstormingapp.waitingRoom.WaitingRoomFragment
@@ -39,6 +43,10 @@ class RoomsActivity : AppCompatActivity(), RoomsFragment.InteractionListener, Wa
         supportFragmentManager.beginTransaction()
                 .add(R.id.rooms_container, roomsFragment, ROOMS_FRAGMENT_TAG)
                 .commit()
+
+        if (ContextCompat.checkSelfPermission(this, GET_ACCOUNTS) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(GET_ACCOUNTS), 1)
+        }
     }
 
     //Create room flow
