@@ -18,6 +18,7 @@ import com.wizeline.brainstormingapp.repository.Message;
 import com.wizeline.brainstormingapp.repository.Repository;
 import com.wizeline.brainstormingapp.repository.UserVote;
 import com.wizeline.brainstormingapp.repository.Vote;
+import com.wizeline.brainstormingapp.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,7 +153,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
     }
 
     private void startWaitingRoom() {
-        //repository.votingFinished(roomId)
+//        repository.votingFinished(roomId)
         Observable.just(Boolean.TRUE)
                 .delay(5, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())

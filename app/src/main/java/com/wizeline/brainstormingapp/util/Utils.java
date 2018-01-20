@@ -1,4 +1,4 @@
-package com.wizeline.brainstormingapp.VoteTinder;
+package com.wizeline.brainstormingapp.util;
 
 import android.content.res.Resources;
 import android.graphics.Point;

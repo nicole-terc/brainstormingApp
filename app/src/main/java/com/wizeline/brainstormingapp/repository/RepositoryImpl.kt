@@ -245,20 +245,24 @@ class RepositoryImpl(private val app: App) : Repository {
     override fun votingFinished(roomId: String): Observable<Boolean> {
         val emailList = ArrayList<String>()
         return getMessages(roomId)
-                .map({ messages ->
+                .map { messages ->
                     messages.forEach {
                         if (!emailList.contains(it.email)) {
                             emailList.add(it.email)
                         }
                     }
                     emailList
-                })
+                }
                 .toObservable()
-                .flatMap({ _ -> getVotes(roomId) })
-                .map({ vote ->
-                    if (emailList.contains(vote.email))
-                        run { emailList.remove(vote.email) }
+                .flatMap { _ ->
+                    getVotes(roomId)
+                }
+                .map { vote ->
+                    if (emailList.contains(vote.email)) {
+                        emailList.remove(vote.email)
+                    }
                     emailList.isEmpty()
-                })
+                }
     }
+
 }

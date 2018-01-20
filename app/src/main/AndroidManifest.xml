@@ -32,11 +32,16 @@
 
         <activity
             android:name=".VoteTinder.VoteActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".champions.ChampionsActivity"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".champions.ChampionsActivity"/>
-
+            android:name=".create_ideas.CreateIdeasActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
