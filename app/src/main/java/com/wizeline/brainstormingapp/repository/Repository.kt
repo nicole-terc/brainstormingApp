@@ -2,6 +2,7 @@ package com.wizeline.brainstormingapp.repository
 
 import com.wizeline.brainstormingapp.Message
 import com.wizeline.brainstormingapp.Room
+import com.wizeline.brainstormingapp.UserVote
 import com.wizeline.brainstormingapp.Vote
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -20,6 +21,6 @@ interface Repository {
 
     fun getTopMessages(roomId: String): Single<List<Message>>
 
-    fun vote(messageId: String, vote: Int): Single<Vote>
+    fun vote(votes: List<UserVote>): Single<List<Vote>>
 
 }

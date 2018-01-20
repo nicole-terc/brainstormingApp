@@ -39,8 +39,8 @@ class App : Application() {
                 return Single.just(listOf(Message("mockId", "mockRoomId", "aRemote@email.com", "Mock text")))
             }
 
-            override fun vote(messageId: String, vote: Int): Single<Vote> {
-                return Single.just(Vote("anId", "aMessageId", "aVoter@email.com", 1))
+            override fun vote(votes: List<UserVote>): Single<List<Vote>> {
+                return Single.just(listOf(Vote("anId", "aMessageId", "aVoter@email.com", 1)))
             }
         }
     }
