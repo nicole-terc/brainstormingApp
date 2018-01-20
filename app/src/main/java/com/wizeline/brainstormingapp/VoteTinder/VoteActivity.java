@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
@@ -26,7 +27,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
     private SwipeDirectionalView mSwipeView;
     private Context mContext;
     private int mAnimationDuration = 300;
-    private boolean isToUndo = false;
+//    private boolean isToUndo = false;
     private Point cardViewHolderSize;
 
     @Override
@@ -59,7 +60,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
 
         cardViewHolderSize = new Point(windowSize.x, windowSize.y - bottomMargin);
 
-        ((App) mContext).getRepository().getMessages()
+        ((App) mContext).getRepository().getOtherMessages()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Message>>() {
@@ -89,19 +90,22 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
             }
         });
 
-        findViewById(R.id.undoBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSwipeView.undoLastSwipe();
-            }
-        });
+//        findViewById(R.id.undoBtn).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mSwipeView.undoLastSwipe();
+//            }
+//        });
 
         mSwipeView.addItemRemoveListener(new ItemRemovedListener() {
             @Override
             public void onItemRemoved(int count) {
-                if (isToUndo) {
-                    isToUndo = false;
-                    mSwipeView.undoLastSwipe();
+//                if (isToUndo) {
+//                    isToUndo = false;
+//                    mSwipeView.undoLastSwipe();
+//                }
+                if(count == 0){
+                    Log.e("aaaaaa","byes");
                 }
             }
         });
@@ -115,7 +119,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
 
     @Override
     public void onVote(UserVote vote) {
-
+        Log.e("aaaaaa",vote.getVote()+" ");
     }
 
 
