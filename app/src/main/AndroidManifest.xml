@@ -35,8 +35,7 @@
 
         <activity
             android:name=".champions.ChampionsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".create_ideas.CreateIdeasActivity"

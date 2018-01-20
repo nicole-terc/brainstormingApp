@@ -8,13 +8,13 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipeDirectionalView;
 import com.mindorks.placeholderview.listeners.ItemRemovedListener;
 import com.wizeline.brainstormingapp.App;
 import com.wizeline.brainstormingapp.R;
+import com.wizeline.brainstormingapp.champions.ChampionsActivity;
 import com.wizeline.brainstormingapp.repository.Message;
 import com.wizeline.brainstormingapp.repository.UserVote;
 import com.wizeline.brainstormingapp.repository.Vote;
@@ -22,8 +22,12 @@ import com.wizeline.brainstormingapp.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -35,7 +39,8 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
     //    private boolean isToUndo = false;
     private Point cardViewHolderSize;
     private List<UserVote> userVotes;
-    private RelativeLayout loading;
+
+    private String roomId;
 
     public static Intent getIntent(Context context, String roomId) {
         Intent i = new Intent(context, VoteActivity.class);
@@ -47,10 +52,11 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vote);
+        roomId = getIntent().getStringExtra(ROOM_ID);
         userVotes = new ArrayList<>();
         mSwipeView = findViewById(R.id.swipeView);
         mContext = getApplicationContext();
-        //loading = findViewById(R.id.loading);
+
         int bottomMargin = Utils.dpToPx(160);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
         mSwipeView.getBuilder()
@@ -131,7 +137,7 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
                             .subscribe(new Consumer<List<Vote>>() {
                                 @Override
                                 public void accept(List<Vote> votes) throws Exception {
-                                    // TODO: 1/20/18 aqui va nicolinha
+                                    startWaitingRoom();
                                 }
                             }, new Consumer<Throwable>() {
                                 @Override
@@ -145,11 +151,51 @@ public class VoteActivity extends AppCompatActivity implements VoteHolder.Callba
         });
     }
 
-    public void addMessagesToView(List<Message> messages, Point cardViewHolderSize) {
+    private void startWaitingRoom() {
+//        repository.votingFinished(roomId)
+        Observable.just(Boolean.TRUE)
+                .delay(5, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean finished) {
+                        if (finished) {
+                            goToChampionsActivity();
+                            onComplete();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void goToChampionsActivity() {
+        Intent intent = new Intent(this, ChampionsActivity.class);
+        intent.putExtra(ROOM_ID, roomId);
+        startActivity(intent);
+    }
+
+    private void addMessagesToView(List<Message> messages, Point cardViewHolderSize) {
         for (Message message : messages) {
             mSwipeView.addView(new VoteHolder(message, cardViewHolderSize, this));
         }
     }
+
+
 
     @Override
     public void onBackPressed() {
