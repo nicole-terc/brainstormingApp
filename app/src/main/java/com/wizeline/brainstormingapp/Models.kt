@@ -1,18 +1,18 @@
 package com.wizeline.brainstormingapp
 
 data class Room(
-        val id: Long,
+        val id: String,
         val hostEmail: String,
         val name: String)
 
 data class Message(
-        val id: Long,
-        val idRoom: Long,
+        val id: String,
+        val idRoom: String,
         val email: String,
         val text: String)
 
 data class Vote(
-        val id: Long,
-        val idMessage: Long,
+        val id: String,
+        val idMessage: String,
         val voterEmail: String,
         val vote: Int)
