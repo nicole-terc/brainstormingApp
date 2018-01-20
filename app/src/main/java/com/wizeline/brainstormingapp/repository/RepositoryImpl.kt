@@ -129,8 +129,8 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
-    override fun getTopMessages(): Single<List<Message>> {
-        return app.repository.getTopMessages()
+    override fun getTopMessages(roomId: String): Single<List<Message>> {
+        return app.repository.getTopMessages(roomId)
     }
 
     override fun vote(messageId: String, vote: Int): Single<Vote> {

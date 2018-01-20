@@ -35,7 +35,7 @@ class App : Application() {
                 )
             }
 
-            override fun getTopMessages(): Single<List<Message>> {
+            override fun getTopMessages(roomId: String): Single<List<Message>> {
                 return Single.just(listOf(Message("mockId", "mockRoomId", "aRemote@email.com", "Mock text")))
             }
 

@@ -18,7 +18,7 @@ interface Repository {
 
     fun getOtherMessages(roomId: String): Single<List<Message>>
 
-    fun getTopMessages(): Single<List<Message>>
+    fun getTopMessages(roomId: String): Single<List<Message>>
 
     fun vote(messageId: String, vote: Int): Single<Vote>
 
