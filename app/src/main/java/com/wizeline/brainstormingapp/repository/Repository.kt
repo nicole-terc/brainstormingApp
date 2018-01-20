@@ -3,6 +3,7 @@ package com.wizeline.brainstormingapp.repository
 import com.wizeline.brainstormingapp.Message
 import com.wizeline.brainstormingapp.Room
 import com.wizeline.brainstormingapp.Vote
+import io.reactivex.Observable
 import io.reactivex.Single
 
 interface Repository {
@@ -11,7 +12,7 @@ interface Repository {
 
     fun getRoom(roomId: String): Single<Room>
 
-    fun getRooms(): Single<List<Room>>
+    fun getRooms(): Observable<Room>
 
     fun joinRoom(room: Room): Single<Boolean>
 

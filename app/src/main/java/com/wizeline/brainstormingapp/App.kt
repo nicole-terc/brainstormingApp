@@ -3,6 +3,7 @@ package com.wizeline.brainstormingapp
 import android.app.Application
 import com.wizeline.brainstormingapp.ext.getUserEmail
 import com.wizeline.brainstormingapp.repository.Repository
+import io.reactivex.Observable
 import io.reactivex.Single
 
 class App : Application() {
@@ -17,8 +18,8 @@ class App : Application() {
                 return Single.just(Room("mockId", "aRemote@email.com", "Mock Name", System.currentTimeMillis()))
             }
 
-            override fun getRooms(): Single<List<Room>> {
-                return Single.just(listOf(Room("mockId", "aRemote@email.com", "Mock Name", System.currentTimeMillis())))
+            override fun getRooms(): Observable<Room> {
+                return Observable.just(Room("mockId", "aRemote@email.com", "Mock Name", System.currentTimeMillis()))
             }
 
             override fun joinRoom(room: Room): Single<Boolean> {
