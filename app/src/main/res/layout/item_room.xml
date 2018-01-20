@@ -27,7 +27,7 @@
         app:layout_constraintEnd_toEndOf="@+id/room_name"
         app:layout_constraintStart_toStartOf="@+id/room_name"
         app:layout_constraintTop_toBottomOf="@+id/room_name"
-        tools:text="12-10-2018 2:00pm"/>
+        tools:text="super.admin@email.com"/>
 
     <View
         android:layout_width="match_parent"

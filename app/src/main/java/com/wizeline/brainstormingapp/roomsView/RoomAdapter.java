@@ -19,6 +19,11 @@ import java.util.List;
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
 
     List<Room> items = new ArrayList<>();
+    RoomClickListener listener;
+
+    public void setListener(RoomClickListener listener) {
+        this.listener = listener;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -29,7 +34,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(items.get(position));
+        holder.bind(items.get(position), listener);
     }
 
     @Override
@@ -52,6 +57,11 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
         }
     }
 
+    public void clearItems(){
+        items.clear();
+        notifyDataSetChanged();
+    }
+
     public int getRoomIndex(Room room) {
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getId().equalsIgnoreCase(room.getId())) {
@@ -72,10 +82,19 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
             date = itemView.findViewById(R.id.room_date);
         }
 
-        public void bind(Room room) {
+        public void bind(Room room, RoomClickListener listener) {
             String titleText = room.getName();
             title.setText(titleText);
-            date.setText(room.getHostEmail());
+            date.setText(room.getEmail());
+            itemView.setOnClickListener(view -> {
+                if (listener != null) {
+                    listener.itemClicked(room);
+                }
+            });
         }
+    }
+
+    interface RoomClickListener {
+        void itemClicked(Room room);
     }
 }
