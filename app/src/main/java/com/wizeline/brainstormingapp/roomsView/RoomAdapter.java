@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wizeline.brainstormingapp.R;
-import com.wizeline.brainstormingapp.Room;
+import com.wizeline.brainstormingapp.repository.Room;
 
 import java.util.ArrayList;
 import java.util.List;

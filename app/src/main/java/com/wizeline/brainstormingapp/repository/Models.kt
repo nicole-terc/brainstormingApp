@@ -1,4 +1,4 @@
-package com.wizeline.brainstormingapp
+package com.wizeline.brainstormingapp.repository
 
 data class Room(
         val id: String,
@@ -11,6 +11,11 @@ data class Message(
         val idRoom: String,
         val email: String,
         val text: String)
+
+data class ChampionMessage(
+        val message: Message,
+        val upVotes: Int,
+        val downVotes: Int)
 
 data class Vote(
         val id: String,

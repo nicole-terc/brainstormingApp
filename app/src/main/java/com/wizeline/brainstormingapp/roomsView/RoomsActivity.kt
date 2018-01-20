@@ -8,7 +8,7 @@ import com.google.android.gms.nearby.messages.Message
 import com.google.android.gms.nearby.messages.MessageListener
 import com.wizeline.brainstormingapp.App
 import com.wizeline.brainstormingapp.R
-import com.wizeline.brainstormingapp.Room
+import com.wizeline.brainstormingapp.repository.Room
 import com.wizeline.brainstormingapp.nerby.NearbyService
 import com.wizeline.brainstormingapp.repository.Repository
 import com.wizeline.brainstormingapp.repository.RepositoryImpl

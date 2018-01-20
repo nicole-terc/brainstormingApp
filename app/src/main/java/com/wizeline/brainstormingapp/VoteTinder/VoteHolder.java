@@ -16,9 +16,9 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutDirectional;
 import com.mindorks.placeholderview.annotations.swipe.SwipeTouch;
 import com.mindorks.placeholderview.annotations.swipe.SwipeView;
-import com.wizeline.brainstormingapp.Message;
+import com.wizeline.brainstormingapp.repository.Message;
 import com.wizeline.brainstormingapp.R;
-import com.wizeline.brainstormingapp.UserVote;
+import com.wizeline.brainstormingapp.repository.UserVote;
 
 /**
  * Created by omarsanchez on 1/19/18.

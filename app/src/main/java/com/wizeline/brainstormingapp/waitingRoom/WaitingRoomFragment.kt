@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.wizeline.brainstormingapp.R
-import com.wizeline.brainstormingapp.Room
+import com.wizeline.brainstormingapp.repository.Room
 import kotlinx.android.synthetic.main.fragment_waiting_room.view.*
 
 
