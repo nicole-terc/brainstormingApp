@@ -8,6 +8,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.wizeline.brainstormingapp.App
 import com.wizeline.brainstormingapp.Message
 import com.wizeline.brainstormingapp.Room
+import com.wizeline.brainstormingapp.Vote
+import com.wizeline.brainstormingapp.ext.getUserEmail
 import io.reactivex.Single
 
 class RepositoryImpl(private val app: App) : Repository {
@@ -53,9 +55,9 @@ class RepositoryImpl(private val app: App) : Repository {
         })
     }
 
-    override fun createRoom(email: String, name: String): Single<Room> {
+    override fun createRoom(name: String): Single<Room> {
         return Single.fromPublisher {
-            val room = Room(roomsTable.push().key, email, name, System.currentTimeMillis())
+            val room = Room(roomsTable.push().key, app.getUserEmail(), "A name", System.currentTimeMillis())
             roomsTable.child(room.id).setValue(mapOf(
                     "email" to room.hostEmail,
                     "name" to room.name,
@@ -69,12 +71,12 @@ class RepositoryImpl(private val app: App) : Repository {
         return Single.just(rooms.values.toList())
     }
 
-    override fun joinRoom(email: String, room: Room): Single<Boolean> {
-        return app.repository.joinRoom(email, room)
+    override fun joinRoom(room: Room): Single<Boolean> {
+        return app.repository.joinRoom(room)
     }
 
-    override fun createMessage(email: String, room: Room, text: String): Single<Message> {
-        return app.repository.createMessage(email, room, text)
+    override fun createMessage(room: Room, text: String): Single<Message> {
+        return app.repository.createMessage(room, text)
     }
 
     override fun getMessages(): Single<List<Message>> {

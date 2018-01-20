@@ -2,17 +2,18 @@ package com.wizeline.brainstormingapp.repository
 
 import com.wizeline.brainstormingapp.Message
 import com.wizeline.brainstormingapp.Room
+import com.wizeline.brainstormingapp.Vote
 import io.reactivex.Single
 
 interface Repository {
 
-    fun createRoom(email: String, name: String): Single<Room>
+    fun createRoom(name: String): Single<Room>
 
     fun getRooms(): Single<List<Room>>
 
-    fun joinRoom(email: String, room: Room): Single<Boolean>
+    fun joinRoom(room: Room): Single<Boolean>
 
-    fun createMessage(email: String, room: Room, text: String): Single<Message>
+    fun createMessage(room: Room, text: String): Single<Message>
 
     fun getMessages(): Single<List<Message>>
 
