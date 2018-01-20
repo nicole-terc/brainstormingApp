@@ -1,10 +1,7 @@
 package com.wizeline.brainstormingapp.repository
 
 import com.google.firebase.FirebaseApp
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.wizeline.brainstormingapp.App
 import com.wizeline.brainstormingapp.Message
 import com.wizeline.brainstormingapp.Room
@@ -35,13 +32,24 @@ class RepositoryImpl(private val app: App) : Repository {
 
     override fun getRoom(roomId: String): Single<Room> {
         return Single.fromPublisher {
-            val room = null
-            if (room != null) {
-                it.onNext(room)
-                it.onComplete()
-            } else {
-                it.onError(NoSuchElementException("No room found with id $roomId"))
-            }
+            roomsTable.child(roomId).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    it.onError(error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val key = snapshot.key
+                    val email = snapshot.child("email")?.value as String?
+                    val name = snapshot.child("name")?.value as String?
+                    val timestamp = snapshot.child("timestamp")?.value as Long?
+                    if (key != null && email != null && name != null && timestamp != null) {
+                        it.onNext(Room(key, email, name, timestamp))
+                        it.onComplete()
+                    } else {
+                        it.onError(NoSuchElementException("Room with id $roomId not found!"))
+                    }
+                }
+            })
         }
     }
 
