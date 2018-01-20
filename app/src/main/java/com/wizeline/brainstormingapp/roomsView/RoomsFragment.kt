@@ -10,18 +10,19 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.gson.Gson
 import com.wizeline.brainstormingapp.R
-import com.wizeline.brainstormingapp.repository.Room
 import com.wizeline.brainstormingapp.nerby.NearbyService
+import com.wizeline.brainstormingapp.repository.Room
 import kotlinx.android.synthetic.main.fragment_rooms.view.*
 
 
 /**
  * A simple [Fragment] subclass.
  */
-class RoomsFragment : Fragment() {
+class RoomsFragment : Fragment(), RoomAdapter.RoomClickListener {
 
     interface InteractionListener {
         fun createRoom()
+        fun roomClicked(room: Room)
     }
 
     lateinit var nearbyService: NearbyService
@@ -33,6 +34,7 @@ class RoomsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         nearbyService = NearbyService(context)
         adapter = RoomAdapter()
+        adapter.setListener(this)
     }
 
     override fun onAttach(context: Context?) {
@@ -69,5 +71,16 @@ class RoomsFragment : Fragment() {
 
     fun removeRoom(room: Room) {
         adapter.removeRoom(room)
+    }
+
+    fun clearData(){
+        adapter.clearItems()
+    }
+
+    //Item click listener
+    override fun itemClicked(room: Room) {
+        if (listener != null) {
+            listener!!.roomClicked(room)
+        }
     }
 }

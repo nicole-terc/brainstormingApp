@@ -12,6 +12,7 @@ import com.google.android.gms.nearby.messages.Message
 import com.google.android.gms.nearby.messages.MessageListener
 import com.wizeline.brainstormingapp.App
 import com.wizeline.brainstormingapp.R
+import com.wizeline.brainstormingapp.ext.getUserEmail
 import com.wizeline.brainstormingapp.nerby.NearbyService
 import com.wizeline.brainstormingapp.repository.Repository
 import com.wizeline.brainstormingapp.repository.RepositoryImpl
@@ -30,7 +31,7 @@ class RoomsActivity : AppCompatActivity(), RoomsFragment.InteractionListener, Wa
 
     lateinit var repository: Repository
     lateinit var nearbyService: NearbyService
-    var room: Room? = null
+    lateinit var room: Room
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,13 +60,15 @@ class RoomsActivity : AppCompatActivity(), RoomsFragment.InteractionListener, Wa
 
     fun roomCreated(room: Room) {
         this.room = room
-        goToWaitingRoom()
         nearbyService.startBroadcasting(roomToJson(room))
+        goToWaitingRoom()
     }
 
     fun goToWaitingRoom() {
+        var userEmail = (applicationContext as App).getUserEmail()
+        var fragment = WaitingRoomFragment.getInstance(room, room.email == userEmail)
         supportFragmentManager.beginTransaction()
-                .add(R.id.rooms_container, WaitingRoomFragment(), WAITING_FRAGMENT_TAG)
+                .add(R.id.rooms_container, fragment, WAITING_FRAGMENT_TAG)
                 .addToBackStack(null)
                 .commit()
     }
@@ -78,6 +81,11 @@ class RoomsActivity : AppCompatActivity(), RoomsFragment.InteractionListener, Wa
         fragment.show(supportFragmentManager, CREATE_FRAGMENT_TAG)
     }
 
+    override fun roomClicked(room: Room) {
+        this.room = room
+        goToWaitingRoom()
+    }
+
     //Create dialog
     override fun onButtonPressed(text: String) {
         Toast.makeText(this, "SUPER ROOM: " + text, Toast.LENGTH_SHORT).show()
@@ -86,9 +94,22 @@ class RoomsActivity : AppCompatActivity(), RoomsFragment.InteractionListener, Wa
 
 
     //Waiting room fragment
-    override fun nextSectionButtonPressed() {
-        Toast.makeText(this, "Go to next section ", Toast.LENGTH_SHORT).show()
+    override fun nextSectionButtonPressed(room: Room) {
+        this.room = room
         nearbyService.stopBroadcasting()
+        repository.updateRoom(room)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { item ->
+                    Log.d("ROOMS ACTIVITY", "Room updated: " + item.name)
+                }
+
+    }
+
+    override fun startNextSection(room: Room) {
+        this.room = room
+        Log.d("RoomsActivity", "Room to load: " + ParserUtil.roomToJson(room))
+        Toast.makeText(this, "Go to create items section at " + room.startTime, Toast.LENGTH_SHORT).show()
         supportFragmentManager.beginTransaction()
                 .remove(supportFragmentManager.findFragmentByTag(WAITING_FRAGMENT_TAG))
                 .commit()
@@ -103,13 +124,14 @@ class RoomsActivity : AppCompatActivity(), RoomsFragment.InteractionListener, Wa
     override fun onPause() {
         super.onPause()
         nearbyService.stop()
+        roomsFragment.clearData()
     }
 
     fun getMessageListener(): MessageListener {
         return object : MessageListener() {
             override fun onFound(message: Message?) {
                 if (message != null) {
-                    Log.d("Rooms fragment", "found message: -" + message.getContent().toString() + "-")
+                    Log.d("Rooms fragment", "found message: -" + message.content.toString() + "-")
                     val room = ParserUtil.jsonToRoom(String(message.content))
                     if (!room.name.isEmpty())
                         roomsFragment.addRoom(room)
@@ -118,7 +140,7 @@ class RoomsActivity : AppCompatActivity(), RoomsFragment.InteractionListener, Wa
 
             override fun onLost(message: Message?) {
                 if (message != null) {
-                    Log.d("Rooms fragment", "lost message: -" + message.getContent().toString() + "-")
+                    Log.d("Rooms fragment", "lost message: -" + message.content.toString() + "-")
                     roomsFragment.removeRoom(ParserUtil.jsonToRoom(String(message.content)))
                 }
             }

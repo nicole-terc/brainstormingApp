@@ -2,9 +2,10 @@ package com.wizeline.brainstormingapp.repository
 
 data class Room(
         val id: String,
-        val hostEmail: String,
+        val email: String,
         val name: String,
-        val timestamp: Long)
+        val timestamp: Long,
+        val startTime: Long)
 
 data class Message(
         val id: String,
@@ -20,7 +21,7 @@ data class ChampionMessage(
 data class Vote(
         val id: String,
         val idMessage: String,
-        val voterEmail: String,
+        val email: String,
         val vote: Int)
 
 data class UserVote(

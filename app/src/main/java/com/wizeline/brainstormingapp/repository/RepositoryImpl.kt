@@ -20,35 +20,50 @@ class RepositoryImpl(private val app: App) : Repository {
 
     override fun createRoom(name: String): Single<Room> {
         return Single.fromPublisher {
-            val room = Room(roomsTable.push().key, app.getUserEmail(), name, System.currentTimeMillis())
+            val room = Room(roomsTable.push().key, app.getUserEmail(), name, System.currentTimeMillis(), 0L)
             roomsTable.child(room.id).setValue(mapOf(
-                    "email" to room.hostEmail,
+                    "email" to room.email,
                     "name" to room.name,
-                    "timestamp" to room.timestamp))
+                    "timestamp" to room.timestamp,
+                    "startTime" to room.startTime
+            ))
             it.onNext(room)
             it.onComplete()
         }
     }
 
-    override fun getRoom(roomId: String): Single<Room> {
+    override fun updateRoom(room: Room): Single<Room> {
         return Single.fromPublisher {
-            roomsTable.child(roomId).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    it.onError(error.toException())
+            roomsTable.child(room.id).updateChildren(mapOf(
+                    "email" to room.email,
+                    "name" to room.name,
+                    "timestamp" to room.timestamp,
+                    "startTime" to System.currentTimeMillis()
+            ))
+        }
+    }
+
+    override fun getRoom(roomId: String): Observable<Room> {
+        return Observable.fromPublisher {
+            roomsTable.child(roomId).addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError?) {
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    parse(snapshot)
+                }
+
+                fun parse(snapshot: DataSnapshot) {
                     val key = snapshot.key
                     val email = snapshot.child("email")?.value as String?
                     val name = snapshot.child("name")?.value as String?
                     val timestamp = snapshot.child("timestamp")?.value as Long?
+                    val startTime = snapshot.child("startTime")?.value as Long?
                     if (key != null && email != null && name != null && timestamp != null) {
-                        it.onNext(Room(key, email, name, timestamp))
-                        it.onComplete()
-                    } else {
-                        it.onError(NoSuchElementException("Room with id $roomId not found!"))
+                        it.onNext(Room(key, email, name, timestamp, startTime ?: 0L))
                     }
                 }
+
             })
         }
     }
@@ -79,8 +94,9 @@ class RepositoryImpl(private val app: App) : Repository {
                     val email = snapshot.child("email")?.value as String?
                     val name = snapshot.child("name")?.value as String?
                     val timestamp = snapshot.child("timestamp")?.value as Long?
-                    if (key != null && email != null && name != null && timestamp != null) {
-                        it.onNext(Room(key, email, name, timestamp))
+                    val startTime = snapshot.child("startTime")?.value as Long?
+                    if (key != null && email != null && name != null && timestamp != null && startTime != null) {
+                        it.onNext(Room(key, email, name, timestamp, startTime))
                     }
                 }
             })
@@ -101,6 +117,31 @@ class RepositoryImpl(private val app: App) : Repository {
             it.onComplete()
         }
     }
+
+    override fun getMessages(roomId: String): Single<List<Message>> {
+        return Single.fromPublisher {
+            messagesTable.orderByChild("id_room").equalTo(roomId).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    it.onError(error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val messages = arrayListOf<Message>()
+                    snapshot.children.filterNotNull().forEach {
+                        val key = it.key
+                        val email = it.child("email")?.value as String?
+                        val text = it.child("text")?.value as String?
+                        if (key != null && email != null && text != null) {
+                            messages.add(Message(key, roomId, email, text))
+                        }
+                    }
+                    it.onNext(messages)
+                    it.onComplete()
+                }
+            })
+        }
+    }
+
 
     override fun getOtherMessages(roomId: String): Single<List<Message>> {
         return Single.fromPublisher {
@@ -181,6 +222,11 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
+    override fun getVotes(roomId: String): Observable<Vote> {
+
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun vote(votes: List<UserVote>): Single<List<Vote>> {
         return Single.fromPublisher {
             val remoteVotes = arrayListOf<Vote>()
@@ -188,7 +234,7 @@ class RepositoryImpl(private val app: App) : Repository {
                 val remoteVote = Vote(votesTable.push().key, it.idMessage, app.getUserEmail(), it.vote)
                 votesTable.child(remoteVote.id).setValue(mapOf(
                         "id_message" to remoteVote.idMessage,
-                        "email" to remoteVote.voterEmail,
+                        "email" to remoteVote.email,
                         "vote" to remoteVote.vote))
                 remoteVotes.add(remoteVote)
             }
@@ -197,4 +243,23 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
+    override fun votingFinished(roomId: String): Observable<Boolean> {
+        val emailList = ArrayList<String>()
+        return getMessages(roomId)
+                .map({ messages ->
+                    messages.forEach() {
+                        if (!emailList.contains(it.email)) {
+                            emailList.add(it.email)
+                        }
+                    }
+                    emailList
+                })
+                .toObservable()
+                .flatMap({ _ -> getVotes(roomId) })
+                .map({ vote ->
+                    if (emailList.contains(vote.email));
+                    run { emailList.remove(vote.email) }
+                    emailList.isEmpty()
+                })
+    }
 }
