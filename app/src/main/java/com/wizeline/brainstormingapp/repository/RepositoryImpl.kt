@@ -2,10 +2,7 @@ package com.wizeline.brainstormingapp.repository
 
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
-import com.wizeline.brainstormingapp.App
-import com.wizeline.brainstormingapp.Message
-import com.wizeline.brainstormingapp.Room
-import com.wizeline.brainstormingapp.Vote
+import com.wizeline.brainstormingapp.*
 import com.wizeline.brainstormingapp.ext.getUserEmail
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -129,23 +126,23 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
-    override fun getTopMessages(): Single<List<Message>> {
-        return app.repository.getTopMessages()
+    override fun getTopMessages(roomId: String): Single<List<Message>> {
+        return app.repository.getTopMessages(roomId)
     }
 
-    override fun vote(messageId: String, vote: Int): Single<Vote> {
+    override fun vote(votes: List<UserVote>): Single<List<Vote>> {
         return Single.fromPublisher {
-            if (vote != 1 && vote != -1) {
-                it.onError(IllegalArgumentException("Your vote should be 1 or -1"))
-            } else {
-                val remoteVote = Vote(votesTable.push().key, messageId, app.getUserEmail(), vote)
+            val remoteVotes = arrayListOf<Vote>()
+            votes.forEach {
+                val remoteVote = Vote(votesTable.push().key, it.idMessage, app.getUserEmail(), it.vote)
                 votesTable.child(remoteVote.id).setValue(mapOf(
                         "id_message" to remoteVote.idMessage,
                         "email" to remoteVote.voterEmail,
                         "vote" to remoteVote.vote))
-                it.onNext(remoteVote)
-                it.onComplete()
+                remoteVotes.add(remoteVote)
             }
+            it.onNext(remoteVotes)
+            it.onComplete()
         }
     }
 
