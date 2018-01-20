@@ -1,6 +1,5 @@
 package com.wizeline.brainstormingapp.nerby;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
 
@@ -14,53 +13,49 @@ import com.google.android.gms.nearby.messages.MessageListener;
  */
 
 public class NearbyService {
-    private static final String TAG = "";
+    private static final String TAG = "NearbyService";
     private Context context;
-    MessageListener mMessageListener;
-    Message mMessage = new Message("Hello World".getBytes());
-
+    MessageListener messageListener;
+    Message message;
 
     public NearbyService(Context context) {
         this.context = context;
     }
 
-    public void start() {
-        MessageListener mMessageListener = new MessageListener() {
-            @Override
-            public void onFound(Message message) {
-                Log.d(TAG, "Found message: " + new String(message.getContent()));
-                new AlertDialog.Builder(context)
-                        .setTitle("Message received")
-                        .setMessage(new String(message.getContent()))
-                        .create()
-                        .show();
-            }
-
-            @Override
-            public void onLost(Message message) {
-                Log.d(TAG, "Lost sight of message: " + new String(message.getContent()));
-                new AlertDialog.Builder(context)
-                        .setTitle("Message lost")
-                        .setMessage(new String(message.getContent()))
-                        .create()
-                        .show();
-            }
-        };
-        Nearby.getMessagesClient(context).subscribe(mMessageListener);
-        mMessage = new Message("Hello World".getBytes());
+    public void startListening(MessageListener messageListener) {
+        this.messageListener = messageListener;
+        Nearby.getMessagesClient(context).subscribe(this.messageListener);
+        Log.d(TAG, "Start listening for messages");
     }
 
-    public void startBroadcasting() {
-        Nearby.getMessagesClient(context).publish(mMessage);
+    public void stopListening() {
+        if (messageListener != null) {
+            Nearby.getMessagesClient(context).unsubscribe(messageListener);
+        }
+        Log.d(TAG, "stopListening listening for messages");
     }
 
-    public void stopBroadcasting(){
-        Nearby.getMessagesClient(context).unpublish(mMessage);
+    public void startBroadcasting(String messageText) {
+        if (message != null) {
+            Log.d(TAG, "Already casting message: -" + new String(message.getContent()) + "-");
+            return;
+        }
+        message = new Message(messageText.getBytes());
+        Nearby.getMessagesClient(context).publish(message);
+        Log.d(TAG, "Start cast of message: -" + new String(message.getContent()) + "-");
+
+    }
+
+    public void stopBroadcasting() {
+        if (message != null) {
+            Log.d(TAG, "Stop cast of message: -" + new String(message.getContent()) + "-");
+            Nearby.getMessagesClient(context).unpublish(message);
+            message = null;
+        }
     }
 
     public void stop(){
-        Nearby.getMessagesClient(context).unsubscribe(mMessageListener);
+        stopBroadcasting();
+        stopListening();
     }
-
-
 }
