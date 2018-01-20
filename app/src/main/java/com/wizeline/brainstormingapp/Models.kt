@@ -3,7 +3,8 @@ package com.wizeline.brainstormingapp
 data class Room(
         val id: String,
         val hostEmail: String,
-        val name: String)
+        val name: String,
+        val timestamp: Long)
 
 data class Message(
         val id: String,
