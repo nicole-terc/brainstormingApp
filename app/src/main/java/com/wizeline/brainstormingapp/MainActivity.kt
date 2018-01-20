@@ -13,21 +13,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         val repository = RepositoryImpl(applicationContext as App)
         text.setOnClickListener {
             Log.d("Wizeline", "clicked")
-//            repository.createRoom("A name")
-//            repository.getRoom("-L3Gvjp-JBCpmCZUKqs5")
-//            repository.getRooms()
-//            repository.createMessage("-L3Gvjp-JBCpmCZUKqs5", listOf("hello", "world"))
-            repository.getOtherMessages("-L3Gvjp-JBCpmCZUKqs5")
+            repository.createRoom("A name")
+            repository.getRoom("-L3Gvjp-JBCpmCZUKqs5")
+            repository.getRooms()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        Log.d("Wizeline", "Success $it")
+                        Log.d("Wizeline", "Success %s".format(it))
                     }, {
-                        Log.d("Wizeline", "Error $it")
+                        Log.d("Wizeline", "Error %s".format(it))
                     })
         }
     }

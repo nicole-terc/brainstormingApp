@@ -10,7 +10,9 @@ import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
 import com.mindorks.placeholderview.annotations.swipe.SwipeCancelState;
+import com.mindorks.placeholderview.annotations.swipe.SwipeIn;
 import com.mindorks.placeholderview.annotations.swipe.SwipeInDirectional;
+import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutDirectional;
 import com.mindorks.placeholderview.annotations.swipe.SwipeTouch;
 import com.mindorks.placeholderview.annotations.swipe.SwipeView;
@@ -66,12 +68,25 @@ public class VoteHolder {
 
     @SwipeOutDirectional
     private void onSwipeOutDirectional(SwipeDirection direction) {
-        callback.onVote(getUserVote(-1));
-
+        if(direction.getDirection() == SwipeDirection.RIGHT_TOP.getDirection()){
+            callback.onVote(getUserVote(1));
+        }else {
+            callback.onVote(getUserVote(-1));
+        }
     }
 
     @SwipeInDirectional
     private void onSwipeInDirectional(SwipeDirection direction) {
+        callback.onVote(getUserVote(1));
+    }
+
+    @SwipeOut
+    private void onSwipedOut(){
+        callback.onVote(getUserVote(-1));
+    }
+
+    @SwipeIn
+    private void onSwipeIn(){
         callback.onVote(getUserVote(1));
     }
 
