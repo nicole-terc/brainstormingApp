@@ -1,6 +1,7 @@
 package com.wizeline.brainstormingapp.roomsView
 
 import android.Manifest.permission.GET_ACCOUNTS
+import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -12,6 +13,7 @@ import com.google.android.gms.nearby.messages.Message
 import com.google.android.gms.nearby.messages.MessageListener
 import com.wizeline.brainstormingapp.App
 import com.wizeline.brainstormingapp.R
+import com.wizeline.brainstormingapp.create_ideas.CreateIdeasActivity
 import com.wizeline.brainstormingapp.ext.getUserEmail
 import com.wizeline.brainstormingapp.nerby.NearbyService
 import com.wizeline.brainstormingapp.repository.Repository
@@ -109,10 +111,9 @@ class RoomsActivity : AppCompatActivity(), RoomsFragment.InteractionListener, Wa
     override fun startNextSection(room: Room) {
         this.room = room
         Log.d("RoomsActivity", "Room to load: " + ParserUtil.roomToJson(room))
-        Toast.makeText(this, "Go to create items section at " + room.startTime, Toast.LENGTH_SHORT).show()
-        supportFragmentManager.beginTransaction()
-                .remove(supportFragmentManager.findFragmentByTag(WAITING_FRAGMENT_TAG))
-                .commit()
+        var i = Intent(this, CreateIdeasActivity::class.java)
+        i.putExtra("room", ParserUtil.roomToJson(this.room))
+        startActivity(i)
     }
 
     //Nearby flow
