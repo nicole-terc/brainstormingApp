@@ -16,9 +16,12 @@ class MainActivity : AppCompatActivity() {
         val repository = RepositoryImpl(applicationContext as App)
         text.setOnClickListener {
             Log.d("Wizeline", "clicked")
-            repository.createRoom("A name")
-            repository.getRoom("-L3Gvjp-JBCpmCZUKqs5")
-            repository.getRooms()
+//            repository.createRoom("A name")
+//            repository.getRoom("-L3Gvjp-JBCpmCZUKqs5")
+//            repository.getRooms()
+//            repository.createMessage("-L3Gvjp-JBCpmCZUKqs5", listOf("Hello", "World"))
+//            repository.getOtherMessages("-L3Gvjp-JBCpmCZUKqs5")
+            repository.vote("-L3HNPz71CnXX8hwDCSX", if (Math.random() > 0.5) 1 else -1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({

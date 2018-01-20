@@ -14,6 +14,7 @@ class RepositoryImpl(private val app: App) : Repository {
 
     private val roomsTable by lazy { FirebaseDatabase.getInstance().getReference("rooms") }
     private val messagesTable by lazy { FirebaseDatabase.getInstance().getReference("messages") }
+    private val votesTable by lazy { FirebaseDatabase.getInstance().getReference("votes") }
 
     init {
         FirebaseApp.initializeApp(app)
@@ -132,8 +133,20 @@ class RepositoryImpl(private val app: App) : Repository {
         return app.repository.getTopMessages()
     }
 
-    override fun vote(messageId: String, vote: Long): Single<Vote> {
-        return app.repository.vote(messageId, vote)
+    override fun vote(messageId: String, vote: Int): Single<Vote> {
+        return Single.fromPublisher {
+            if (vote != 1 && vote != -1) {
+                it.onError(IllegalArgumentException("Your vote should be 1 or -1"))
+            } else {
+                val remoteVote = Vote(votesTable.push().key, messageId, app.getUserEmail(), vote)
+                votesTable.child(remoteVote.id).setValue(mapOf(
+                        "id_message" to remoteVote.idMessage,
+                        "email" to remoteVote.voterEmail,
+                        "vote" to remoteVote.vote))
+                it.onNext(remoteVote)
+                it.onComplete()
+            }
+        }
     }
 
 }
