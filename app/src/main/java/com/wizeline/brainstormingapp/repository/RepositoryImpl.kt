@@ -67,6 +67,10 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
+    override fun getRoom(roomId: String): Single<Room> {
+        return app.repository.getRoom(roomId)
+    }
+
     override fun getRooms(): Single<List<Room>> {
         return Single.just(rooms.values.toList())
     }
@@ -81,6 +85,14 @@ class RepositoryImpl(private val app: App) : Repository {
 
     override fun getMessages(): Single<List<Message>> {
         return app.repository.getMessages()
+    }
+
+    override fun getOtherMessages(): Single<List<Message>> {
+        return app.repository.getOtherMessages()
+    }
+
+    override fun getTopMessages(): Single<List<Message>> {
+        return app.repository.getTopMessages()
     }
 
     override fun vote(message: Message, vote: Long): Single<Vote> {

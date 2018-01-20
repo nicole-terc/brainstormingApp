@@ -9,6 +9,8 @@ interface Repository {
 
     fun createRoom(name: String): Single<Room>
 
+    fun getRoom(roomId: String): Single<Room>
+
     fun getRooms(): Single<List<Room>>
 
     fun joinRoom(room: Room): Single<Boolean>
@@ -16,6 +18,10 @@ interface Repository {
     fun createMessage(room: Room, text: String): Single<Message>
 
     fun getMessages(): Single<List<Message>>
+
+    fun getOtherMessages(): Single<List<Message>>
+
+    fun getTopMessages(): Single<List<Message>>
 
     fun vote(message: Message, vote: Long): Single<Vote>
 

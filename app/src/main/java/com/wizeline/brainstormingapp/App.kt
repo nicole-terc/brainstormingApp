@@ -13,6 +13,10 @@ class App : Application() {
                 return Single.just(Room("mockId", getUserEmail(), "Mock Name", System.currentTimeMillis()))
             }
 
+            override fun getRoom(roomId: String): Single<Room> {
+                return Single.just(Room("mockId", "aRemote@email.com", "Mock Name", System.currentTimeMillis()))
+            }
+
             override fun getRooms(): Single<List<Room>> {
                 return Single.just(listOf(Room("mockId", "aRemote@email.com", "Mock Name", System.currentTimeMillis())))
             }
@@ -26,6 +30,14 @@ class App : Application() {
             }
 
             override fun getMessages(): Single<List<Message>> {
+                return Single.just(listOf(Message("mockId", "mockRoomId", "aRemote@email.com", "Mock text")))
+            }
+
+            override fun getOtherMessages(): Single<List<Message>> {
+                return Single.just(listOf(Message("mockId", "mockRoomId", "aRemote@email.com", "Mock text")))
+            }
+
+            override fun getTopMessages(): Single<List<Message>> {
                 return Single.just(listOf(Message("mockId", "mockRoomId", "aRemote@email.com", "Mock text")))
             }
 
