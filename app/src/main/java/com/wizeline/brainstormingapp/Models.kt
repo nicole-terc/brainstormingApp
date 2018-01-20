@@ -17,3 +17,7 @@ data class Vote(
         val idMessage: String,
         val voterEmail: String,
         val vote: Int)
+
+data class UserVote(
+        val idMessage: String,
+        val vote: Int)
