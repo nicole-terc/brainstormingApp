@@ -17,6 +17,6 @@ interface Repository {
 
     fun getMessages(): Single<List<Message>>
 
-    fun vote(message: Message, vote: Long): Single<Boolean>
+    fun vote(message: Message, vote: Long): Single<Vote>
 
 }

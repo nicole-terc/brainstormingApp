@@ -29,7 +29,7 @@ class App : Application() {
                 return Single.just(listOf(Message("mockId", "mockRoomId", "aRemote@email.com", "Mock text")))
             }
 
-            override fun vote(message: Message, vote: Long): Single<Boolean> {
+            override fun vote(message: Message, vote: Long): Single<Vote> {
                 return Single.just(Vote("anId", "aMessageId", "aVoter@email.com", 1))
             }
         }
