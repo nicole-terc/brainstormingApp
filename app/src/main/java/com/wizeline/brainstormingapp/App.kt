@@ -8,7 +8,7 @@ class App : Application() {
 
     val repository: Repository by lazy {
         object : Repository {
-            override fun createRoom(email: String, token: String, name: String): Single<Room> {
+            override fun createRoom(email: String, name: String): Single<Room> {
                 return Single.just(Room("mockId", "mock@email.com", "Mock Name"))
             }
 
