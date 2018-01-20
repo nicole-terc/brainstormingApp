@@ -62,20 +62,20 @@ class RepositoryImpl(private val app: App) : Repository {
                 }
 
                 override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                    cacheData(snapshot)
+                    parse(snapshot)
                 }
 
                 override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                    cacheData(snapshot)
+                    parse(snapshot)
                 }
 
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    cacheData(snapshot)
+                    parse(snapshot)
                 }
 
                 override fun onChildRemoved(snapshot: DataSnapshot) {}
 
-                fun cacheData(snapshot: DataSnapshot) {
+                fun parse(snapshot: DataSnapshot) {
                     val key = snapshot.key
                     val email = snapshot.child("email")?.value as String?
                     val name = snapshot.child("name")?.value as String?
@@ -103,12 +103,29 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
-    override fun getMessages(): Single<List<Message>> {
-        return app.repository.getMessages()
-    }
+    override fun getOtherMessages(roomId: String): Single<List<Message>> {
+        return Single.fromPublisher {
+            messagesTable.orderByChild("id_room").equalTo(roomId).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    it.onError(error.toException())
+                }
 
-    override fun getOtherMessages(): Single<List<Message>> {
-        return app.repository.getOtherMessages()
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val messages = arrayListOf<Message>()
+                    snapshot.children.filterNotNull().forEach {
+                        val key = it.key
+                        val email = it.child("email")?.value as String?
+                        val text = it.child("text")?.value as String?
+                        if (key != null && email != null && text != null) {
+                            messages.add(Message(key, roomId, email, text))
+                        }
+                    }
+                    val userEmail = app.getUserEmail()
+                    it.onNext(messages.filter { it.email != userEmail })
+                    it.onComplete()
+                }
+            })
+        }
     }
 
     override fun getTopMessages(): Single<List<Message>> {
