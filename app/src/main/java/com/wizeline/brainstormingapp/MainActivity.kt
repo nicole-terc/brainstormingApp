@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         val repository = RepositoryImpl(applicationContext as App)
         text.setOnClickListener {
             Log.d("Wizeline", "clicked".format())
-            repository.getRoom("-L3Gvjp-JBCpmCZUKqs5")
+            repository.createMessage("-L3Gvjp-JBCpmCZUKqs5", listOf("Hello World", "Ola Mundo"))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({

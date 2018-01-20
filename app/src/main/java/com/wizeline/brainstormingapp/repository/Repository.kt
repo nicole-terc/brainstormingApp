@@ -14,9 +14,7 @@ interface Repository {
 
     fun getRooms(): Observable<Room>
 
-    fun joinRoom(room: Room): Single<Boolean>
-
-    fun createMessage(room: Room, text: String): Single<Message>
+    fun createMessage(roomId: String, texts: List<String>): Single<List<Message>>
 
     fun getMessages(): Single<List<Message>>
 

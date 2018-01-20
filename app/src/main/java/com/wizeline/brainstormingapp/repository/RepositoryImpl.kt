@@ -13,6 +13,7 @@ import io.reactivex.Single
 class RepositoryImpl(private val app: App) : Repository {
 
     private val roomsTable by lazy { FirebaseDatabase.getInstance().getReference("rooms") }
+    private val messagesTable by lazy { FirebaseDatabase.getInstance().getReference("messages") }
 
     init {
         FirebaseApp.initializeApp(app)
@@ -87,12 +88,19 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
-    override fun joinRoom(room: Room): Single<Boolean> {
-        return app.repository.joinRoom(room)
-    }
-
-    override fun createMessage(room: Room, text: String): Single<Message> {
-        return app.repository.createMessage(room, text)
+    override fun createMessage(roomId: String, texts: List<String>): Single<List<Message>> {
+        return Single.fromPublisher {
+            it.onNext(texts.map {
+                Message(messagesTable.push().key, roomId, app.getUserEmail(), it)
+            }.onEach {
+                messagesTable.child(it.id).setValue(mapOf(
+                        "id_room" to it.idRoom,
+                        "email" to it.email,
+                        "text" to it.text
+                ))
+            })
+            it.onComplete()
+        }
     }
 
     override fun getMessages(): Single<List<Message>> {

@@ -22,12 +22,8 @@ class App : Application() {
                 return Observable.just(Room("mockId", "aRemote@email.com", "Mock Name", System.currentTimeMillis()))
             }
 
-            override fun joinRoom(room: Room): Single<Boolean> {
-                return Single.just(true)
-            }
-
-            override fun createMessage(room: Room, text: String): Single<Message> {
-                return Single.just(Message("mockId", "mockRoomId", getUserEmail(), "Mock text"))
+            override fun createMessage(roomId: String, texts: List<String>): Single<List<Message>> {
+                return Single.just(listOf(Message("mockId", "mockRoomId", getUserEmail(), "Mock text")))
             }
 
             override fun getMessages(): Single<List<Message>> {
