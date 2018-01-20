@@ -31,6 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CreateIdeasActivity extends AppCompatActivity implements CreateIdeaHolder.Callback {
     private final int mAnimationDuration = 300;
+    public List<String> messages;
     CountDownTimer countDownTimer;
     private Long remainingTime;
     private Long actualTime;
@@ -40,7 +41,6 @@ public class CreateIdeasActivity extends AppCompatActivity implements CreateIdea
     private SwipeDirectionalView mSwipeView;
     private Point cardViewHolderSize;
     private Room room;
-    private List<String> messages;
     private ActionBar toolbar;
 
     @Override

@@ -16,7 +16,15 @@ import kotlinx.android.synthetic.main.fragment_champions.view.*
 
 class ChampionsActivityFragment : Fragment() {
 
-    private val roomId = "-L3Gvjp-JBCpmCZUKqs5" // TODO room id
+    companion object {
+        fun getInstance(roomId: String): ChampionsActivityFragment {
+            var fragment = ChampionsActivityFragment()
+            fragment.roomId = roomId
+            return fragment
+        }
+    }
+
+    lateinit var roomId: String
     private val championsAdapter = ChampionsAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
