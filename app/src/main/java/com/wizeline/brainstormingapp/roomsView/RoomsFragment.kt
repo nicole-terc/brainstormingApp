@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.gson.Gson
 import com.wizeline.brainstormingapp.R
-import com.wizeline.brainstormingapp.Room
+import com.wizeline.brainstormingapp.repository.Room
 import com.wizeline.brainstormingapp.nerby.NearbyService
 import kotlinx.android.synthetic.main.fragment_rooms.view.*
 

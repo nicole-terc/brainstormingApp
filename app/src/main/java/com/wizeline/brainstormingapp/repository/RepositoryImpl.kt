@@ -2,10 +2,11 @@ package com.wizeline.brainstormingapp.repository
 
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
-import com.wizeline.brainstormingapp.*
+import com.wizeline.brainstormingapp.App
 import com.wizeline.brainstormingapp.ext.getUserEmail
 import io.reactivex.Observable
 import io.reactivex.Single
+import java.util.*
 
 class RepositoryImpl(private val app: App) : Repository {
 
@@ -126,7 +127,7 @@ class RepositoryImpl(private val app: App) : Repository {
         }
     }
 
-    override fun getTopMessages(roomId: String): Single<List<Pair<Message, Int>>> {
+    override fun getTopMessages(roomId: String): Single<List<ChampionMessage>> {
         return Single.fromPublisher { publisher ->
             messagesTable.orderByChild("id_room").equalTo(roomId).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -143,7 +144,7 @@ class RepositoryImpl(private val app: App) : Repository {
                             messages.add(Message(key, roomId, email, text))
                         }
                     }
-                    val messagesMap = hashMapOf<Message, Int>()
+                    val messagesMap = hashMapOf<Message, ChampionMessage>()
                     messages.forEach { message ->
                         votesTable.orderByChild("id_message").equalTo(message.id).addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onCancelled(error: DatabaseError) {
@@ -151,17 +152,24 @@ class RepositoryImpl(private val app: App) : Repository {
                             }
 
                             override fun onDataChange(voteSnapshot: DataSnapshot) {
-                                var votes = 0
+                                var upVotes = 0
+                                var downVotes = 0
                                 voteSnapshot.children.filterNotNull().forEach {
                                     val vote = it.child("vote")?.value as Long?
                                     if (vote != null) {
-                                        votes += vote.toInt()
+                                        val voteValue = vote.toInt()
+                                        if (voteValue > 0) {
+                                            upVotes += voteValue
+                                        } else {
+                                            downVotes += voteValue
+                                        }
                                     }
                                 }
-                                messagesMap[message] = votes
+                                messagesMap[message] = ChampionMessage(message, upVotes, downVotes)
                                 if (messagesMap.keys.size == messages.size) {
                                     publisher.onNext(messagesMap.toList()
-                                            .sortedByDescending { (_, value) -> value }
+                                            .sortedByDescending { (_, value) -> value.upVotes + value.downVotes }
+                                            .map { it.second }
                                             .take(5))
                                     publisher.onComplete()
                                 }

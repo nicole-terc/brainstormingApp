@@ -1,7 +1,7 @@
 package com.wizeline.brainstormingapp.util
 
 import com.google.gson.Gson
-import com.wizeline.brainstormingapp.Room
+import com.wizeline.brainstormingapp.repository.Room
 
 /**
  * Created by Nicole Terc on 1/20/18.

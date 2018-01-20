@@ -12,10 +12,10 @@ import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipeDirectionalView;
 import com.mindorks.placeholderview.listeners.ItemRemovedListener;
 import com.wizeline.brainstormingapp.App;
-import com.wizeline.brainstormingapp.Message;
+import com.wizeline.brainstormingapp.repository.Message;
 import com.wizeline.brainstormingapp.R;
-import com.wizeline.brainstormingapp.UserVote;
-import com.wizeline.brainstormingapp.Vote;
+import com.wizeline.brainstormingapp.repository.UserVote;
+import com.wizeline.brainstormingapp.repository.Vote;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Brainstorming App</string>
+    <string name="title_champions">Champions</string>
+    <string name="action_settings">Settings</string>
+    <string name="votes_up">%d Up votes</string>
+    <string name="votes_down">%d Down votes</string>
 </resources>
