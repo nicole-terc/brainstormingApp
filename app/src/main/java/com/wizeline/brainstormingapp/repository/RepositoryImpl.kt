@@ -45,8 +45,9 @@ class RepositoryImpl(private val app: App) : Repository {
                 val key = snapshot.key
                 val email = snapshot.child("email")?.value as String?
                 val name = snapshot.child("name")?.value as String?
-                if (key != null && email != null && name != null) {
-                    rooms[key] = Room(key, email, name)
+                val timestamp = snapshot.child("timestamp")?.value as Long?
+                if (key != null && email != null && name != null && timestamp != null) {
+                    rooms[key] = Room(key, email, name, timestamp)
                 }
             }
         })
@@ -54,8 +55,11 @@ class RepositoryImpl(private val app: App) : Repository {
 
     override fun createRoom(email: String, name: String): Single<Room> {
         return Single.fromPublisher {
-            val room = Room(roomsTable.push().key, email, name)
-            roomsTable.child(room.id).setValue(mapOf("email" to email, "name" to name))
+            val room = Room(roomsTable.push().key, email, name, System.currentTimeMillis())
+            roomsTable.child(room.id).setValue(mapOf(
+                    "email" to room.hostEmail,
+                    "name" to room.name,
+                    "timestamp" to room.timestamp))
             it.onNext(room)
             it.onComplete()
         }

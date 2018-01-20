@@ -9,11 +9,11 @@ class App : Application() {
     val repository: Repository by lazy {
         object : Repository {
             override fun createRoom(email: String, name: String): Single<Room> {
-                return Single.just(Room("mockId", "mock@email.com", "Mock Name"))
+                return Single.just(Room("mockId", "mock@email.com", "Mock Name", System.currentTimeMillis()))
             }
 
             override fun getRooms(): Single<List<Room>> {
-                return Single.just(listOf(Room("mockId", "mock@email.com", "Mock Name")))
+                return Single.just(listOf(Room("mockId", "mock@email.com", "Mock Name", System.currentTimeMillis())))
             }
 
             override fun joinRoom(email: String, room: Room): Single<Boolean> {
